@@ -30,4 +30,15 @@ function ready(PackageDefinition) {
     configFile.save(cb);
   };
 
+  PackageDefinition.getLoopBackVersion = function(cb) {
+    this.findOne(function(err, pkg) {
+      if (err) return cb(err);
+      if (!pkg) {
+        cb(null, 'Cannot find Loopback version, defaulting to 2.x.');
+      } else {
+        cb(pkg.dependencies['loopback'] || pkg.devDependencies['loopback'] ||
+          pkg.optionalDependencies['loopback']);
+      }
+    });
+  }
 };

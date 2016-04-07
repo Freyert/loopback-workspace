@@ -183,6 +183,12 @@ module.exports = function(Workspace) {
       if (template.package) {
         template.package.name = packageName;
         template.package.description = description;
+        
+        var loopback = 'loopback';
+        if (loopback in options) {
+          template.package.dependencies[loopback] = options.loopback;
+        }
+        
         steps.push(function(cb) {
           PackageDefinition.create(template.package, cb);
         });

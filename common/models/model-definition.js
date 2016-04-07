@@ -76,10 +76,19 @@ function ready(ModelDefinition) {
     assert(relation.embed && relation.embed.as, 'embed requires "as"');
     switch(relation.embed.as) {
       case 'object':
-        assert(relation.embed.key, 'embed as object requires "key"');
+        assert(relation.embed.key || relation.embed.keyFn, 'embed as object requires "key" or "keyFn"');
         result = {};
         relatedData.forEach(function(related) {
-          var key = related[relation.embed.key];
+          var Entity = require('loopback').getModel(relation.model);
+          var key;
+          if (relation.embed.key) {
+            key = related[relation.embed.key];
+          }
+          if (relation.embed.keyFn) {
+            if (typeof Entity[relation.embed.keyFn] === "function") {
+              key = Entity[relation.embed.keyFn](related);
+            }
+          }
           result[key] = related;
         });
         cleanRelatedData(result, relation);
@@ -174,6 +183,7 @@ function ready(ModelDefinition) {
       var data = Entity.getConfigFromData(relatedData[ix]);
       delete data[relation.foreignKey];
       delete data[relation.embed.key];
+      delete data[relation.embed.keyFn];
 
       // Convert the disableInherit placeholder (myBaseProp: false) back to false
       if (relation.model === 'ModelProperty' && data.disableInherit) {

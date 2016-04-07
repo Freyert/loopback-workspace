@@ -199,6 +199,10 @@ connector._loadFromFile = function(cb) {
         f.load(function(err) {
           if (err) return next(err);
           PackageDefinition.addToCache(cache, f.data);
+          if (dir === '.') {
+            app.models.Workspace.loopBackVersion = f.data.dependencies['loopback'] ||
+              f.data.devDependencies['loopback'] || f.data.optionalDependencies['loopback'];
+          }
           next();
         });
       }, function(err) {

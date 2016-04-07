@@ -107,6 +107,14 @@ givenWorkspaceFromTemplate = function(template, options, cb) {
   });
 }
 
+// Add option in loopback to set version eg. {'loopback':'^3.0.0'}
+givenLBXWorkspace = function(option, cb) {
+  resetWorkspace(function(err) {
+    if(err) return cb(err);
+    givenWorkspaceFromTemplate('empty-server', option, cb);
+  });
+}
+
 function findOfType(name, type) {
   assert(name);
   assert(type);
